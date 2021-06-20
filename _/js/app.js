@@ -76,7 +76,9 @@
 
             // Create Select Filter After init Complete 
             initComplete: function() {
-                this.api().columns().every( function () {
+                this.api().columns().every( function (i) {
+                if(i == 1 || i == 2 || i == 3)
+                {
                     var column = this;
                     var select = $('<select><option value="">Show all</option></select>')
                         .appendTo($(column.footer()).empty())
@@ -94,6 +96,7 @@
                             select.append('<option value="'+d+'">'+d+'</option>');
                         }
                     });
+                }
                 });
             },
 
