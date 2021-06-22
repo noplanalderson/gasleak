@@ -1,3 +1,19 @@
+/**
+ * GASLEAK DASHBOARD
+ *
+ * Dashboard for Gasleak Monitoring with Arduino and RTDB Firebase
+ * 
+ * Copyright (c) 2021 - now and forever, Debu Semesta
+ *
+ *
+ * @package GASLEAK DASHBOARD
+ * @author  Debu Semesta
+ * @copyright   Copyright (c) 2021 - now and forever, Debu Semesta. (https://rootdicalism.wordpress.com/)
+ * @link    https://github.com/noplanalderson/gasleak
+ * @since   Version 1.0.0
+ * @filesource
+ * 
+*/
 
     // Initialize Datetime Range Picker
     $('#range').daterangepicker({
@@ -67,7 +83,6 @@
 
         var period;
 
-        console.log(period);
         // Initialize Datatables
         table = $('#sensor_data_tbl').DataTable({
 
@@ -246,11 +261,9 @@
 
         });
         
-        var i;
-
         // Create Alarm Sound
-        for(i = 0; i < colors.length; i++) {
-            num = i + 1;
+        for(var i = 0; i < sensors.length; i++) {
+            num = i - 1;
             if(colors[i] === 'led-red') {
                 document.getElementById('audio-down').play();
                 document.getElementById('audio-down').muted = false;
@@ -262,7 +275,8 @@
             }
 
             // Change led color based on leak_status
-            $('#sensor-'+num).attr('class', colors[i]);
+            $('#'+sensors[i]).attr('class', colors[i]);
+            console.log(colors);
         }
     });
 
@@ -306,7 +320,8 @@
             database.ref('sensor_data/'+index+'/').orderByChild('leak_status').equalTo(true).on('value', function (snap) {
 
                 var leak_data = snap.val();
-                const arrFiltered = leak_data.filter(el => {
+                var leak = []; leak.push(leak_data);
+                const arrFiltered = leak.filter(el => {
                   return el != null && el != '';
                 });
 
@@ -335,7 +350,7 @@
             }
             var chartxaxis = {
                 categories: [
-                    'Today',
+                    'Sensor Name',
                 ],
                 crosshair: true
             }
@@ -343,13 +358,13 @@
                 min: 0,
                 allowDecimals: false,
                 title: {
-                    text: 'Count'
+                    text: 'Leak Total (Event)'
                 }
             }
             var chartooltip = {
                 headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
                 pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                    '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+                    '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
                 footerFormat: '</table>',
                 shared: true,
                 useHTML: true
