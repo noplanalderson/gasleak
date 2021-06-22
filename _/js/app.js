@@ -10,10 +10,12 @@
  * @author  Debu Semesta
  * @copyright   Copyright (c) 2021 - now and forever, Debu Semesta. (https://rootdicalism.wordpress.com/)
  * @link    https://github.com/noplanalderson/gasleak
- * @since   Version 1.0.0
+ * @since   Version 1.0.2
  * @filesource
  * 
 */
+
+    const VERSION = 'v1.0.2';
 
     // Initialize Datetime Range Picker
     $('#range').daterangepicker({
@@ -388,3 +390,4 @@
 
     var year = new Date().getFullYear();
     $('.year').text(year);
+    $('.version').text(VERSION);
