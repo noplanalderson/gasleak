@@ -261,7 +261,7 @@
 
         });
         
-        // Create Alarm Sound
+        // Create Alarm Sound and Sensor Color Indicators
         for(var i = 0; i < sensors.length; i++) {
             num = i - 1;
             if(colors[i] === 'led-red') {
@@ -276,7 +276,6 @@
 
             // Change led color based on leak_status
             $('#'+sensors[i]).attr('class', colors[i]);
-            console.log(colors);
         }
     });
 
@@ -331,9 +330,6 @@
             chartData.push({name:index, data:[leakStatus]});
         });
 
-        // console.log(chartData);
-        // console.log(count);
-        // 
         // Convert Leak Counter Array to JSON
         var jsonData = JSON.stringify(chartData);
 
