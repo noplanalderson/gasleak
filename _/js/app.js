@@ -298,6 +298,7 @@
 
     getLocalStream();
 
+    // Get All Sensors for Chart 
     database.ref('sensor_data/').on('value', function (snapshot) {
 
         var value = snapshot.val();
@@ -321,12 +322,24 @@
             database.ref('sensor_data/'+index+'/').orderByChild('leak_status').equalTo(true).on('value', function (snap) {
 
                 var leak_data = snap.val();
-                var leak = []; leak.push(leak_data);
-                const arrFiltered = leak.filter(el => {
-                  return el != null && el != '';
-                });
 
-                leakStatus.push(arrFiltered.length);
+                var leaks = [];
+
+                $.each(leak_data, function (index_data, leak) {
+
+                    if (leak) {
+
+                        leaks.push(leak);
+                        const arrFiltered = leaks.filter(el => {
+                          return el != null && el != '';
+                        });
+
+                    }
+                })
+
+                leakStatus.push(leaks.length);
+
+                // console.log(leaks);
             })
             
             chartData.push({name:index, data:[leakStatus]});
@@ -341,7 +354,7 @@
                 type: 'column'
             }
             var chartitle = {
-                text: 'Leak Counter Today'
+                text: 'Leak Counter'
             }
             var chartsubtitle = {
                 text: 'Gasleak Dashboard'
@@ -388,6 +401,9 @@
         });
     });
 
+    // Show year in copyright
     var year = new Date().getFullYear();
     $('.year').text(year);
+
+    // Show dashboard version
     $('.version').text(VERSION);
