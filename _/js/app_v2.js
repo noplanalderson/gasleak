@@ -48,8 +48,6 @@
 
     var minDate, maxDate;
 
-    var sensorNames = [];
-
     var sensorLocations = [];
 
     var tableData = [];
@@ -66,8 +64,10 @@
 
         var value = snapshot.val();
         
+        var sensorNames = [];
         // Get Sensor Data from Every Sensor Name 
         $.each(value, function (index, value) {
+            
             
             sensorNames.push('<option value="'+index+'">'+index+'</option>');
             $('#sensor_name').html(sensorNames);
