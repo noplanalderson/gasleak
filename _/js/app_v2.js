@@ -15,7 +15,7 @@
  * 
 */
 
-    const VERSION = 'v1.1.1';
+    const VERSION = 'v1.2.0';
 
     // Initialize Datetime Range Picker
     $('#range').daterangepicker({
@@ -65,16 +65,22 @@
         var value = snapshot.val();
         
         var sensorNames = [];
+
+        var option = '';
+
+        option += '<option value="" data-location="">Choose Sensor</option>';
+        
         // Get Sensor Data from Every Sensor Name 
         $.each(value, function (index, value) {
             
             
-            sensorNames.push('<option value="'+index+'">'+index+'</option>');
-            $('#sensor_name').html(sensorNames);
+            option += '<option value="'+index+'" data-location="'+value.sensor_location+'">'+index+'</option>';
         });
+        
+        $('#sensor_name').html(option);
     });
 
-    function getLeakTime(sensor, period = 'All the Time')
+    function getLeakTime(sensor, sensor_location, period = 'All the Time')
     {
         database.ref('/'+sensor+'/leak_time/').on('value', function (snap) {
 
@@ -86,7 +92,7 @@
                 if (value) {
 
                     // Save Sensor Data to Array
-                    tableData.push({leak_time:[value]});
+                    tableData.push({leak_time:[value],status:'Bocor',location:sensor_location});
 
                 }
             })
@@ -107,6 +113,12 @@
                 {
                     "data" : "leak_time",
                 },
+                {
+                    "data" : "status",
+                },
+                {
+                    "data" : "location",
+                }
             ],
             // Enable Datatables Responsive
             responsive: true,
@@ -121,16 +133,16 @@
                 extend: 'excelHtml5',
                 pageSize: 'A4',
                 title: "Sensor Data - " + sensor + " (" + period + ")",
-                messageTop: "Sensor Data - " + period + "\n",
-                messageTop: "Period : " + period + "\n\n\n",
+                messageTop: "Sensor Data - " + sensor + " ("+ sensor +")\n",
+                messageTop: "Period : " + period + "\n",
                 exportOptions: {
-                    columns: [0],
+                    columns: [0,1,2],
                 }
             },
             {
                 extend: 'csv',
                 exportOptions: {
-                    columns : [0]
+                    columns : [0,1,2]
                 }
             },
             {
@@ -141,21 +153,26 @@
                 customize : function(doc) {
                     doc.content.splice(0, 1, {
                         text: [{
-                            text: "Sensor Data " + sensor + "\n",
+                            text: "Sensor Data " + sensor + "\n\n",
                             fontSize: 14,
                             alignment: 'center'
-                        }, 
+                        },
                         {
-                            text: "Period : " + period + "\n\n\n",
-                            fontSize: 11,
-                            alignment: 'center'
+                            text: "Location: " + sensor_location + "\n",
+                            fontSize: 10,
+                            alignment: 'left'
+                        },
+                        {
+                            text: "Period: " + period + "\n\n\n",
+                            fontSize: 10,
+                            alignment: 'left'
                         }]
                     });
                     doc.content[1].margin = [ 10, 0, 10, 0 ];
-                    doc.content[1].table.widths = [300];
+                    doc.content[1].table.widths = [150,80,100];
                 },
                 exportOptions: {
-                    columns: [0],
+                    columns: [0,1,2],
                 }
             }]
         });
@@ -164,9 +181,10 @@
 
     $('#sensor_name').on('change', function () {
         var sensorName = $('#sensor_name').val();
-        $('.title').text('Sensor Data: '+ sensorName);
+        var sensorLocation = $(this).find(':selected').data('location');
+        $('.title').text('Sensor Data: '+ sensorName + ' ('+sensorLocation+')');
         tableData = [];
-        getLeakTime(sensorName);
+        getLeakTime(sensorName, sensorLocation);
     })
     
     $('.applyBtn').on('click', function () {
@@ -199,11 +217,13 @@
         $('#range').on('change', function () {
             
             var sensorName = $('#sensor_name').val();
+            var sensorLocation = $('#sensor_name').find(':selected').data('location');
+
             $('#period').text('Period :' + $('#range').val());
             
             tableData = [];
             
-            getLeakTime(sensorName, $('#range').val());
+            getLeakTime(sensorName, sensorLocation, $('#range').val());
         });
     })
 
@@ -227,7 +247,7 @@
             
             sensors.push(index);
 
-            database.ref('/'+index+'/').on('value', function (snap) {
+            database.ref('/'+index+'/sensor_status').on('value', function (snap) {
 
                 if (value) {
 
@@ -238,15 +258,21 @@
             });
 
         });
-
+        
         // Create Alarm Sound and Sensor Color Indicators
         for(var i = 0; i < sensors.length; i++) {
             if(colors[i] === 'led-red') {
                 document.getElementById('audio-down').play();
                 document.getElementById('audio-down').muted = false;
+                document.getElementById('audio-up').pause();
+                document.getElementById('audio-up').muted = true;
+                document.getElementById('audio-up').currentTime = 0;
             }
             else
             {
+                document.getElementById('audio-down').pause();
+                document.getElementById('audio-down').muted = true;
+                document.getElementById('audio-down').currentTime = 0;
                 document.getElementById('audio-up').play();
                 document.getElementById('audio-up').muted = false;
             }

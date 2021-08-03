@@ -85,6 +85,7 @@
                             </div>
                             <div class="col-4">
                                 <select name="sensor_name" id="sensor_name" class="form-control float-right">
+                                    <option value="">Choose Sensor</option>
                                 </select>
                             </div>
                         </div>
@@ -95,7 +96,9 @@
                         <table id="sensor_data_tbl" class="table table-responsive w-100 table-striped">
                             <thead class="bg-dark text-white">
                                 <tr>
-                                    <th width="250px">Leak Time</th>
+                                    <th width="150px">Leak Time</th>
+                                    <th>Status</th>
+                                    <th>Location</th>
                                 </tr>
                             </thead>
                             <tbody id="tbody">
@@ -103,6 +106,8 @@
                             <tfoot class="bg-dark text-white">
                                 <tr>
                                     <th>Leak Time</th>
+                                    <th>Status</th>
+                                    <th>Location</th>
                                 </tr>
                             </tfoot>
                         </table>
