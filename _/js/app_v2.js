@@ -160,13 +160,13 @@
                 messageTop: "Sensor Data - " + sensor + " ("+ sensor +")\n",
                 messageTop: "Period : " + period + "\n",
                 exportOptions: {
-                    columns: [0,1,2],
+                    columns: [0,1,2,3],
                 }
             },
             {
                 extend: 'csv',
                 exportOptions: {
-                    columns : [0,1,2]
+                    columns : [0,1,2,3]
                 }
             },
             {
@@ -193,10 +193,10 @@
                         }]
                     });
                     doc.content[1].margin = [ 10, 0, 10, 0 ];
-                    doc.content[1].table.widths = [150,80,100];
+                    doc.content[1].table.widths = [150,80,150,100];
                 },
                 exportOptions: {
-                    columns: [0,1,2],
+                    columns: [0,1,2,3],
                 }
             }]
         });
