@@ -15,7 +15,7 @@
  * 
 */
 
-    const VERSION = 'v1.3.0';
+    const VERSION = 'v1.3.1';
 
     // Initialize Datetime Range Picker
     $('#range').daterangepicker({
@@ -103,15 +103,26 @@
         var leaks = [];
         var timeleak = [];
 
+        const options = { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric', 
+            hour:'numeric', 
+            minute:'numeric', 
+            second:'numeric'
+        };
+
         for(var i in data[0]) timeleak.push(data[0][i]);
         for(var i in data[1]) leaks.push(data[1][i]);
 
         for (var i = 0; i < timeleak.length; i++) {
-            tableData.push({time:timeleak[i],status:'Bocor',location:sensor_location,volume:leaks[i]});
+            var datetime = new Date(timeleak[i]); 
+            tableData.push({raw_time:timeleak[i],time:datetime.toLocaleDateString('en-EN', options),status:'Bocor',location:sensor_location,volume:leaks[i]});
         }
 
         for(var a in data[4]) {
-            tableData.push({time:data[4][a],status:'Ditambal',location:sensor_location,volume:'-'});
+            var datetime = new Date(data[4][a]); 
+            tableData.push({raw_time:data[4][a],time:datetime.toLocaleDateString('en-EN', options),status:'Ditambal',location:sensor_location,volume:'-'});
         }
 
         // Destroy Datatables Before Re-draw it to Renew Data
@@ -120,10 +131,10 @@
         // Initialize Datatables
         table = $('#sensor_data_tbl').DataTable({
 
-            "order": [[0,"asc"]],
+            "order": [[1,"asc"]],
             'columnDefs': [ 
                 {
-                    'targets': [1,2,3],
+                    'targets': [2,3,4],
                     'orderable': false,
                 }
             ],
@@ -131,6 +142,11 @@
             "data" : tableData,
             // Enable Ordering by First Colum (Datetime)
             columns : [
+                {
+                    "data" : "raw_time",
+                    "visible" : false,
+                    "searchable" : true
+                },
                 {
                     "data" : "time",
                 },
@@ -160,13 +176,13 @@
                 messageTop: "Sensor Data - " + sensor + " ("+ sensor +")\n",
                 messageTop: "Period : " + period + "\n",
                 exportOptions: {
-                    columns: [0,1,2,3],
+                    columns: [1,2,3,4],
                 }
             },
             {
                 extend: 'csv',
                 exportOptions: {
-                    columns : [0,1,2,3]
+                    columns : [1,2,3,4]
                 }
             },
             {
@@ -196,7 +212,7 @@
                     doc.content[1].table.widths = [150,80,150,100];
                 },
                 exportOptions: {
-                    columns: [0,1,2,3],
+                    columns: [1,2,3,4],
                 }
             }]
         });
@@ -221,8 +237,8 @@
                 var max = new Date(range[1]);
                 var date = new Date(data[0]);
                 const options = { year: 'numeric', month: 'long', day: 'numeric', hour:'numeric', minute:'numeric', second:'numeric'  };
-                var minPeriod = min.toLocaleDateString('id-ID', options);  
-                var maxPeriod = max.toLocaleDateString('id-ID', options);  
+                var minPeriod = min.toLocaleDateString('en-EN', options);  
+                var maxPeriod = max.toLocaleDateString('en-EN', options);  
 
                 period = minPeriod + ' - ' + maxPeriod;
                 if (
@@ -243,7 +259,7 @@
             var sensorName = $('#sensor_name').val();
             var sensorLocation = $('#sensor_name').find(':selected').data('location');
 
-            $('#period').text('Period :' + $('#range').val());
+            $('#period').text('Period: ' + $('#range').val());
             
             tableData = [];
             
