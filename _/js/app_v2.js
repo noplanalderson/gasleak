@@ -15,7 +15,7 @@
  * 
 */
 
-    const VERSION = 'v1.2.0';
+    const VERSION = 'v1.3.0';
 
     // Initialize Datetime Range Picker
     $('#range').daterangepicker({
@@ -82,21 +82,37 @@
 
     function getLeakTime(sensor, sensor_location, period = 'All the Time')
     {
-        database.ref('/'+sensor+'/leak_time/').on('value', function (snap) {
+        var data = [];
+
+        database.ref('/'+sensor+'/').on('value', function (snap) {
 
             var sensor_data = snap.val();
 
             // Get Sensor Data from Every Sensor Name 
             $.each(sensor_data, function (index, value) {
 
-                if (value) {
+                database.ref('/'+sensor+'/'+index).on('value', function (snapshot) {
+                    
+                    var sensor_data = snapshot.val();
 
-                    // Save Sensor Data to Array
-                    tableData.push({leak_time:[value],status:'Bocor',location:sensor_location});
-
-                }
+                    data.push(value);
+                })
             })
         })
+        
+        var leaks = [];
+        var timeleak = [];
+
+        for(var i in data[0]) timeleak.push(data[0][i]);
+        for(var i in data[1]) leaks.push(data[1][i]);
+
+        for (var i = 0; i < timeleak.length; i++) {
+            tableData.push({time:timeleak[i],status:'Bocor',location:sensor_location,volume:leaks[i]});
+        }
+
+        for(var a in data[4]) {
+            tableData.push({time:data[4][a],status:'Ditambal',location:sensor_location,volume:'-'});
+        }
 
         // Destroy Datatables Before Re-draw it to Renew Data
         $('#sensor_data_tbl').DataTable().destroy();
@@ -104,20 +120,28 @@
         // Initialize Datatables
         table = $('#sensor_data_tbl').DataTable({
 
-            "order": [[0,"desc"]],
-
+            "order": [[0,"asc"]],
+            'columnDefs': [ 
+                {
+                    'targets': [1,2,3],
+                    'orderable': false,
+                }
+            ],
             // Parsing Sensor Data form Array to Datatables
             "data" : tableData,
             // Enable Ordering by First Colum (Datetime)
             columns : [
                 {
-                    "data" : "leak_time",
+                    "data" : "time",
                 },
                 {
                     "data" : "status",
                 },
                 {
                     "data" : "location",
+                },
+                {
+                    "data" : "volume"
                 }
             ],
             // Enable Datatables Responsive
