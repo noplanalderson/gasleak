@@ -147,7 +147,7 @@
 
         for (var i = 0; i < timeleak.length; i++) {
             var datetime = new Date(timeleak[i]); 
-            tableData.push({raw_time:timeleak[i],time:datetime.toLocaleDateString('en-EN', options),status:'Bocor',location:sensor_location,volume:leaks[i]});
+            tableData.push({raw_time:timeleak[i],time:datetime.toLocaleDateString('id-ID', options),status:'Bocor',location:sensor_location,volume:leaks[i]});
         }
 
         // for(var a in data[4]) {
