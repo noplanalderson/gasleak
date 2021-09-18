@@ -15,7 +15,7 @@
  * 
 */
 
-    const VERSION = 'v1.4.0';
+    const VERSION = 'v1.4.1';
 
     // Initialize Datetime Range Picker
     $('#range').daterangepicker({
@@ -161,16 +161,20 @@
         // Initialize Datatables
         table = $('#sensor_data_tbl').DataTable({
 
-            "order": [[1,"asc"]],
+            "order": [[0,"desc"]],
             'columnDefs': [ 
                 {
-                    'targets': [2,3],
+                    'targets': [1,2,3],
                     'orderable': false,
+                },
+                { 
+                    type: 'date', 
+                    'targets': [0] 
                 }
             ],
             // Parsing Sensor Data form Array to Datatables
             "data" : tableData,
-            // Enable Ordering by First Colum (Datetime)
+            // Enable Ordering by First Column (Datetime)
             columns : [
                 {
                     "data" : "raw_time",
