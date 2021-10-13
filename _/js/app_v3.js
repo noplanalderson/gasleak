@@ -95,7 +95,7 @@
     $('#sensor_data_tbl').DataTable();
 
     /**
-     * Fungsi untuk menonaktifkan alarm
+     * Fungsi untuk mengaktifkan alarm bocor
      * 
     */
     function audioDown(id) {
@@ -116,7 +116,7 @@
     //------------------------------------------------------------------
     
     /**
-     * Fungsi untuk mengaktifkan alarm
+     * Fungsi untuk mengaktifkan alarm jika sudah tidak ada kebocoran
      * 
     */
     function audioUp(id) {
@@ -420,7 +420,7 @@
 
                 if (value) {
                     // Tampilkan warna merah jika leak_status true (bocor) dan hijau jika false (tidak bocor)
-                    var color = ((value.sensor_status == true) ? 'led-red' : 'led-green');
+                    var color = ((value.sensor_status === true) ? 'led-red' : 'led-green');
                     colors.push(color);
                 }
             });
